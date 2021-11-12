@@ -58,7 +58,14 @@ async function run() {
             const services= await cursor.toArray();
             res.send(services)
         })
-
+        //DELETE SERVICE 
+        app.delete('/services/:id', async(req,res)=>{
+            console.log(req.params.id);
+            const result =await serviceCollactions.deleteOne({_id: ObjectId(req.params.id)});
+            res.send(result)
+        });
+        
+  
 
        //POST service
        app.post ('/services', async(req,res)=>{
@@ -68,6 +75,10 @@ async function run() {
         const result =await serviceCollactions.insertOne(service)
         res.send(result)
        })
+        
+        
+        
+        
      //get users ID verified admin
         app.get('/users/:email', async (req, res) => {
             const email = req.params.email;
@@ -147,10 +158,28 @@ async function run() {
             const mypurchages = await cursor.toArray();
             res.json(mypurchages)
         })
+        ///my purchages order confirms get all for admin
+        app.get('/allmypurchages', async (req, res) => {
+            const query = req.query;
+            // const  = { email: email }
+            const cursor = orderConfirms.find(query);
+            const mypurchages = await cursor.toArray();
+            res.json(mypurchages)
+        })
+        //my delete purchages order confirms get all for admin
+        app.delete('/DeleteAllOrder/:id', async(req,res)=>{
+            // console.log(req.params.id);
+            const result =await orderConfirms.deleteOne({
+                _id: ObjectId(req.params.id),
+            
+            });
+            res.send(result)
+        });
+          
 
          //delete from my purchage order
             app.delete('/DeleteOrder/:id', async(req,res)=>{
-                // console.log(req.params.id);
+                console.log(req.params.id);
                 const result =await orderCollactions.deleteOne({
                     _id: ObjectId(req.params.id),
                 
@@ -159,8 +188,47 @@ async function run() {
             });
               
         
-        
+           
+            //UPDATE confirm status of confirm orders
+                    app.put('/allmypurchages/:id', async (req, res) => {
+                      const id = req.params.id;
+                      const query = { _id: ObjectId(id) }; 
+                      const updateDoc = {
+                          $set: {
+                              status:"Comfirm",
+                          },
+                      };
+                      const result = await orderConfirms.updateOne(query, updateDoc)
+                      console.log('updating', id)
+                      res.json(result)
+                  })
 
+        
+        
+        //UPDATE API
+        app.put('/services/:id', async (req, res) => {
+            const id = req.params.id;
+            const updatedUser = req.body;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    name: updatedUser.titile,
+                    name: updatedUser.description,
+                    name: updatedUser.price,
+                    name: updatedUser.img,
+                    name: updatedUser.time,
+                },
+            };
+            const result = await serviceCollactions.updateOne(filter, updateDoc, options)
+            // console.log('updating', id)
+            res.json(result)
+        })
+        
+        
+        
+        
+        
 
     }
     finally {
