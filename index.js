@@ -51,6 +51,7 @@ async function run() {
         const orderCollactions = database.collection('order')
         const orderConfirms = database.collection('orderConfirms')
         const usersCollactions = database.collection('users')
+        const reviewCollactions = database.collection('usersReview')
         
         //get service
         app.get('/services', async(req,res)=>{
@@ -239,7 +240,19 @@ async function run() {
             res.json(result)
         })
         
-        
+          //user review 
+          app.post('/reviewCollactions', async (req, res) => {
+            const orderConfirm = req.body;
+            const result = await reviewCollactions.insertOne(orderConfirm)
+            console.log(result);
+            res.json(result)
+        })
+        // get review 
+        app.get('/reviewCollactions', async(req,res)=>{
+            const cursor= reviewCollactions.find({})
+            const services= await cursor.toArray();
+            res.send(services)
+        })
         
         
         
