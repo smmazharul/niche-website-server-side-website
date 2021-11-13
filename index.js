@@ -58,6 +58,19 @@ async function run() {
             const services= await cursor.toArray();
             res.send(services)
         })
+        //get single service
+        app.get('/services/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const service= await serviceCollactions.findOne(query)
+            // const services=  cursor.toArray();
+            console.log('load single service with Id:', id);
+            res.send(service)
+            
+        })
+
+
+
         //DELETE SERVICE 
         app.delete('/services/:id', async(req,res)=>{
             console.log(req.params.id);
@@ -208,16 +221,17 @@ async function run() {
         //UPDATE API
         app.put('/services/:id', async (req, res) => {
             const id = req.params.id;
+            console.log('update id:',req);
             const updatedUser = req.body;
             const filter = { _id: ObjectId(id) };
             const options = { upsert: true };
             const updateDoc = {
                 $set: {
-                    name: updatedUser.titile,
-                    name: updatedUser.description,
-                    name: updatedUser.price,
-                    name: updatedUser.img,
-                    name: updatedUser.time,
+                    titile: updatedUser.titile,
+                    description: updatedUser.description,
+                    img: updatedUser.img,
+                    time: updatedUser.time,
+                    price: updatedUser.price,
                 },
             };
             const result = await serviceCollactions.updateOne(filter, updateDoc, options)
